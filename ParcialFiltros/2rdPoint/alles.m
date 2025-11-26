@@ -37,7 +37,7 @@ wp1 = 2*pi*f_cutoff(2); % Frecuencia de corte
 ws1 = 2*pi*fc(2); % Frecuencia de rechazo (512 Hz)
 
 % Diseño del filtro analógico Butterworth
-[n1, Wn1] = buttord(wp1, ws1, Ap, As, 's');
+[n1, Wn1] = buttord(wp1, ws1, Ap, As );%'s');
 [b1_analog, a1_analog] = butter(n1, Wn1, 'low', 's');
 fprintf('Orden del filtro: %d\n', n1);
 

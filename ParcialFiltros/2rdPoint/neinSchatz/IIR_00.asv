@@ -1,0 +1,38 @@
+% IIR_00 - Pasabajos
+
+fs = 64000;% Frecuencia de muestreo
+Rp = 3;% Ripple de banda de paso
+As = 15;% Atenuacion en banda de rechazo
+
+%Frecuencias a utilizar
+f_0 =102.4;%frecuencia central
+fc_2= 512;%frecuencia de rechazo
+fc_1 = sqrt(f_0*fc_2); % Frecuencia cut-off(Media Geometrica)
+
+
+
+% Normalizar para buttord
+%W1 = fc_1/(fs/2);
+%W2 = fc_2/(fs/2);
+
+%Buttord analogico
+% Convertir a rad/s para el diseño analógico (buttord con 's' usa rad/s)
+Wp_s = 2*pi*fc_1;   % rad/s
+Ws_s = 2*pi*fc_2;   % rad/s
+
+%[n,Wn]=buttord(W1, W2, Rp, As);%% Dos opciones, usar 's' para disenar el analogico real o hacer el digital
+[n,Wn]=buttord(W1, W2, Rp, As,'s');
+
+%[b,a] = butter(n,Wn,"low");
+[b,a] = butter(n,Wn,"low", 's');
+
+[bz,az] = impinvar(b,a,fs);
+
+
+%% Compute frequency response
+figure
+freqz(bz, az, 100000, fs, "ctf");   % f is in Hz
+
+%% Convert to kHz
+%%f_kHz = f ;
+

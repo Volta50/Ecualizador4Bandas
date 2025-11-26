@@ -1,0 +1,94 @@
+% IIR_01 - Pasabanda
+
+fs = 64000;% Frecuencia de muestreo
+Rp = 3;% Ripple de banda de paso
+As = 15;% Atenuacion en banda de rechazo
+
+mayorOrden = 3;%Obtenido de mayorOrdenGG.m
+
+%Frecuencias a utilizar
+
+f_central =12800;%frecuencia c
+f_stop_low = 2560;
+f_stop_high = 12800*5;
+
+f_pass_low =  sqrt(f_central*f_stop_low);
+f_pass_high =  sqrt(f_central*f_stop_high);
+
+Wp = [f_pass_low   f_pass_high];
+Ws = [f_stop_low   f_stop_high];
+
+
+
+% Normalizar para buttord
+Wp = 2*pi*Wp;
+Ws = 2*pi*Ws;
+
+
+
+
+[n,Wn]=buttord(Wp, Ws, Rp, As,'s')
+n = mayorOrden;%Asignación del mayor orden
+
+
+[b_bp,a_bp] = butter(n,Wn,'bandpass','s');
+[bz_imp, az_imp] = impinvar(b_bp,a_bp,fs);
+
+
+%====Pasaaltos para el bilinear
+
+Wp_hp = 2*pi*f_pass_low;
+Ws_hp = 2*pi*f_stop_low;
+
+[n,Wn_hp]=buttord(Wp_hp, Ws_hp, Rp, As,'s');
+[b_hp, a_hp] = butter(n,Wn_hp,'high','s');
+
+
+[bz_bi, az_bi] = bilinear(b_hp,a_hp,fs);
+
+sos_imp = tf2sos(bz_imp,az_imp);
+sos_bi = tf2sos(bz_bi, az_bi);
+
+%=========================================
+figure(1)
+freqz(sos_imp,10000,fs)
+title(sprintf('f_central = %0.1f Bandpass Filter-ImpulseInvariance',f_central))
+
+
+
+% Add vertical lines
+
+xline(f_pass_low/1000, 'r--', 'LineWidth', 1.3);   % cutoff
+xline(f_pass_high/1000, 'r--', 'LineWidth', 1.3);   % stopband edge
+xline(f_stop_low/1000, 'b--', 'LineWidth', 1.3);   % cutoff
+xline(f_stop_high/1000, 'b--', 'LineWidth', 1.3);   % stopband edge
+yline(-Rp, 'g--', 'LineWidth', 1.3);   % stopband edge
+yline(-As, 'v--', 'LineWidth', 1.3);   % stopband edge
+
+% (Optional) Add labels near the lines
+text(f_pass_low/1000, -5, ' f pass low', 'Color','r','FontSize',6);
+text(f_pass_high/1000, -5, ' f pass high', 'Color','r','FontSize',6);
+text(f_stop_low/1000, -18, ' f stop low', 'Color','b','FontSize',6);
+text(f_stop_high/1000, -18, ' f stop high', 'Color','b','FontSize',6);
+
+%===================================
+figure(2)
+freqz(sos_bi,2048,fs)
+title(sprintf('f_{central} = %0.1f Bandpass Filter - Bilinear Transform',f_central))
+
+
+
+% Add vertical lines
+
+xline(f_pass_low/1000, 'r--', 'LineWidth', 1.3);   % cutoff
+xline(f_pass_high/1000, 'r--', 'LineWidth', 1.3);   % stopband edge
+xline(f_stop_low/1000, 'b--', 'LineWidth', 1.3);   % cutoff
+xline(f_stop_high/1000, 'b--', 'LineWidth', 1.3);   % stopband edge
+yline(-Rp, 'g--', 'LineWidth', 1.3);   % stopband edge
+yline(-As, 'v--', 'LineWidth', 1.3);   % stopband edge
+
+% (Optional) Add labels near the lines
+text(f_pass_low/1000, -5, ' f pass low', 'Color','r','FontSize',6);
+text(f_pass_high/1000, -5, ' f pass high', 'Color','r','FontSize',6);
+text(f_stop_low/1000, -18, ' f stop low', 'Color','b','FontSize',6);
+text(f_stop_high/1000, -18, ' f stop high', 'Color','b','FontSize',6);
