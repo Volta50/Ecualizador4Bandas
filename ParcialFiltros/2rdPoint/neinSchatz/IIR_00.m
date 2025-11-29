@@ -25,7 +25,7 @@ Ws = 2*pi*Ws;
 
 
 
-[n,Wn]=buttord(Wp, Ws, Rp, As,'s')
+[n,Wn]=buttord(Wp, Ws, Rp, As,'s') 
 n = mayorOrden;%Asignación del mayor orden
 
 
@@ -37,18 +37,11 @@ sos_imp = tf2sos(bz_imp,az_imp);
 sos_bi = tf2sos(bz_bi, az_bi);
 
 %=========================================
-figure(1)
+figure
 freqz(sos_imp,2048,fs)
-title(sprintf('f_central = %0.1f Lowpass Filter-ImpulseInvariance',f_central))
-
-fc1 = fc_1/1000;% in kHz
-fc2 = fc_2/1000;% in kHz
+title(sprintf('f_{central} = %0.1f Lowpass Filter-ImpulseInvariance',f_central))
 
 
-% Add vertical lines
-
-Wp = [f_pass_low   f_pass_high];
-Ws = [f_stop_low   f_stop_high];
 
 xline(f_pass/1000, 'r--', 'LineWidth', 1.3);   % cutoff
 xline(f_stop/1000, 'b--', 'LineWidth', 1.3);   % stopband edge
@@ -56,11 +49,13 @@ yline(-Rp, 'g--', 'LineWidth', 1.3);   % stopband edge
 yline(-As, 'v--', 'LineWidth', 1.3);   % stopband edge
 
 % (Optional) Add labels near the lines
-text(fc1, -5, ' f_c', 'Color','r','FontSize',12);
-text(fc2, -5, ' f_s', 'Color','m','FontSize',12);
+text(f_pass, -5, ' f_pass', 'Color','r','FontSize',12);
+text(f_stop, -5, ' f_stop', 'Color','m','FontSize',12);
 
 %===================================
-figure(2)
+
+
+figure
 freqz(sos_bi,2048,fs)
 title(sprintf('f_{central} = %0.1f Lowpass Filter - Bilinear Transform',f_central))
 
@@ -68,8 +63,6 @@ title(sprintf('f_{central} = %0.1f Lowpass Filter - Bilinear Transform',f_centra
 
 % Add vertical lines
 
-Wp = [f_pass_low   f_pass_high];
-Ws = [f_stop_low   f_stop_high];
 
 xline(f_pass/1000, 'r--', 'LineWidth', 1.3);   % cutoff
 xline(f_stop/1000, 'b--', 'LineWidth', 1.3);   % stopband edge
@@ -77,6 +70,6 @@ yline(-Rp, 'g--', 'LineWidth', 1.3);   % stopband edge
 yline(-As, 'v--', 'LineWidth', 1.3);   % stopband edge
 
 % (Optional) Add labels near the lines
-text(fc1, -5, ' f_c', 'Color','r','FontSize',12);
-text(fc2, -5, ' f_s', 'Color','m','FontSize',12);
+text(f_pass, -5, ' f_pass', 'Color','r','FontSize',12);
+text(f_stop, -5, ' f_stop', 'Color','m','FontSize',12);
 
